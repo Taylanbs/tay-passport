@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Painel · Passaporte T.A.Y.</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="lock" class="lock-screen">
+  <img src="assets/logo.png" alt="" style="width:52px; margin-bottom:14px;">
+  <h2 style="margin-top:0;">Painel do Método T.A.Y.</h2>
+  <p style="color:var(--ink-soft); font-size:14px;">Área restrita à nutricionista.</p>
+  <input type="password" id="passphrase" placeholder="Senha do painel" style="margin-bottom:14px;">
+  <button class="btn" id="unlock-btn">Entrar</button>
+  <p id="lock-error" style="color:#b5482f; font-size:13px; display:none;">Senha incorreta.</p>
+</div>
+
+<div id="dash" class="dash-shell" style="display:none">
+  <div class="tay-header" style="margin-bottom:10px;">
+    <img src="assets/logo.png" alt="Método T.A.Y." style="width:52px;height:52px;">
+    <div class="brand">Painel · Passaporte T.A.Y.</div>
+  </div>
+
+  <div class="patient-select">
+    <label style="margin:0;">Paciente</label>
+    <select id="patient-picker"></select>
+    <span id="live-indicator" class="status-pill">● atualizando…</span>
+  </div>
+
+  <div id="dash-body">
+    <div class="empty-state">Carregando dados…</div>
+  </div>
+</div>
+
+<script src="js/config-loader.js"></script>
+<script src="js/dashboard.js"></script>
+</body>
+</html>

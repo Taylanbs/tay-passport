@@ -1,0 +1,43 @@
+{
+  "patient_id": "ligia",
+  "patient_name": "Lígia",
+  "saudacao": "Bem-vinda ao seu Passaporte, Lígia",
+  "epigrafe": "Nem toda viagem exige um avião. Algumas começam quando escolhemos estar presentes.",
+  "total_carimbos": 12,
+  "unidade_destino": "cafeteria",
+  "rotulo_categoria_singular": "Café",
+  "rotulo_categoria_plural": "Cafeterias",
+  "opcoes_experiencia": [
+    "Espresso", "Cappuccino", "Café coado", "Flat white", "Chá especial",
+    "Mocha", "Café gelado", "Filtrado na hora", "Outro"
+  ],
+  "regra_tempo_minutos": 30,
+  "missoes": [
+    { "id": "m1", "texto": "Conhecer uma cafeteria nova." },
+    { "id": "m2", "texto": "Visitar uma livraria independente." },
+    { "id": "m3", "texto": "Passar uma tarde em um parque." },
+    { "id": "m4", "texto": "Conhecer um museu ou exposição." },
+    { "id": "m5", "texto": "Experimentar um café que nunca pediu." },
+    { "id": "m6", "texto": "Assistir ao pôr do sol sem olhar o celular." },
+    { "id": "m7", "texto": "Escrever uma página inteira sem interromper para checar notificações." },
+    { "id": "m8", "texto": "Convidar alguém especial para compartilhar um café." },
+    { "id": "m9", "texto": "Fazer um passeio sozinha." },
+    { "id": "m10", "texto": "Descobrir um lugar que gostaria de mostrar para alguém que ama." }
+  ],
+  "categorias_desejos": ["Cafeterias", "Livrarias", "Museus", "Parques"],
+  "vistos": [
+    { "id": "presenca", "emoji": "☕", "nome": "Presença", "significado": "Conseguiu desacelerar e aproveitar o momento." },
+    { "id": "leveza", "emoji": "🌿", "nome": "Leveza", "significado": "Saiu sentindo menos peso emocional." },
+    { "id": "coragem", "emoji": "🧭", "nome": "Coragem", "significado": "Fez algo novo ou saiu da rotina." },
+    { "id": "curiosidade", "emoji": "📖", "nome": "Curiosidade", "significado": "Aprendeu ou descobriu algo interessante." },
+    { "id": "autocuidado", "emoji": "🤍", "nome": "Autocuidado", "significado": "Escolheu cuidar de si de forma intencional." },
+    { "id": "encantamento", "emoji": "✨", "nome": "Encantamento", "significado": "Viveu um momento que merece ser lembrado." }
+  ],
+  "carimbos_simbolicos": [
+    { "id": "descoberta", "emoji": "☕", "nome": "Café descoberto" },
+    { "id": "inspirador", "emoji": "📚", "nome": "Lugar inspirador" },
+    { "id": "paz", "emoji": "🌿", "nome": "Momento de paz" },
+    { "id": "novidade", "emoji": "✨", "nome": "Nova experiência" },
+    { "id": "volta", "emoji": "❤️", "nome": "Quero voltar" }
+  ]
+}

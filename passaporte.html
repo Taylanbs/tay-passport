@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Passaporte T.A.Y.</title>
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+<div id="app" class="tay-shell">
+  <div class="tay-header">
+    <img src="assets/logo.png" alt="Método T.A.Y.">
+    <div class="brand">Método T.A.Y.</div>
+  </div>
+
+  <div id="loading" class="empty-state">Preparando seu passaporte…</div>
+
+  <div id="content" style="display:none">
+
+    <div class="passport-cover">
+      <div class="kicker">Passaporte T.A.Y.</div>
+      <h1 id="cover-title">Uma Jornada de Reencontro</h1>
+      <p class="sub" id="cover-epigraph"></p>
+      <div class="stamp-count" id="cover-count">0 de 12 carimbos</div>
+    </div>
+
+    <div class="tabs" id="tabs"></div>
+
+    <!-- PÁGINA: BEM-VINDA -->
+    <section class="page" data-page="bemvinda">
+      <span class="eyebrow">Página 1</span>
+      <h2 id="welcome-title">Bem-vinda ao seu Passaporte</h2>
+      <p>Este não é um desafio. Não é uma meta. Não é uma lista de tarefas.<br>É um convite.</p>
+      <p>Ao longo da nossa jornada, quero que você visite lugares que despertem curiosidade, desacelerem sua mente e façam você lembrar que viver também faz parte do tratamento.</p>
+      <p><em>O emagrecimento acontece entre uma consulta e outra. Mas a transformação acontece entre uma experiência e outra.</em></p>
+      <hr class="divider">
+      <h3>Como funciona</h3>
+      <p>Durante o acompanhamento, escolha lugares que despertem sua curiosidade — perto de casa ou em outra cidade. O importante é que, naquele momento, você esteja realmente presente. Sem pressa. Sem culpa. Sem produtividade. Apenas vivendo.</p>
+      <hr class="divider">
+      <h3>Regras do Passaporte</h3>
+      <p>📵 <strong>Modo Avião</strong> — os primeiros <span id="rule-minutes">30</span> minutos são livres de celular.<br>
+      ☕ <strong>Peça algo que realmente tenha vontade</strong> — sem pensar em calorias, sem culpa, pensando em experiência.<br>
+      👀 <strong>Observe</strong> — as pessoas, a arquitetura, a música, o aroma, as conversas.<br>
+      ✍️ <strong>Registre</strong> — antes de ir embora, responda apenas algumas perguntas.</p>
+    </section>
+
+    <!-- PÁGINA: NOVO CARIMBO -->
+    <section class="page" data-page="carimbo">
+      <span class="eyebrow" id="stamp-eyebrow">Carimbo Nº —</span>
+      <h2>Registrar experiência</h2>
+      <form id="stamp-form">
+        <label>📍 Nome do lugar</label>
+        <input type="text" id="f-place" required>
+
+        <label>Cidade</label>
+        <input type="text" id="f-city">
+
+        <label>Data</label>
+        <input type="date" id="f-date" required>
+
+        <label id="f-experience-label">☕ O que escolhi experimentar?</label>
+        <div class="chip-group" id="f-experience-chips"></div>
+        <input type="text" id="f-experience-other" placeholder="Se escolheu 'Outro', descreva aqui" style="margin-top:8px; display:none;">
+
+        <label>O que chamou minha atenção?</label>
+        <textarea id="f-attention"></textarea>
+
+        <label>Como eu cheguei?</label>
+        <div class="chip-group" id="f-arrival-chips">
+          <div class="chip" data-v="Cansada">Cansada</div>
+          <div class="chip" data-v="Ansiosa">Ansiosa</div>
+          <div class="chip" data-v="Acelerada">Acelerada</div>
+          <div class="chip" data-v="Tranquila">Tranquila</div>
+        </div>
+        <input type="text" id="f-arrival-other" placeholder="Outra sensação…" style="margin-top:8px;">
+
+        <label>Como estou saindo?</label>
+        <div class="chip-group" id="f-leaving-chips">
+          <div class="chip" data-v="Mais leve">Mais leve</div>
+          <div class="chip" data-v="Inspirada">Inspirada</div>
+          <div class="chip" data-v="Relaxada">Relaxada</div>
+          <div class="chip" data-v="Energizada">Energizada</div>
+          <div class="chip" data-v="Reflexiva">Reflexiva</div>
+        </div>
+
+        <label>Uma frase que merece ser lembrada hoje</label>
+        <textarea id="f-phrase"></textarea>
+
+        <label>Algo bonito que observei</label>
+        <textarea id="f-beauty"></textarea>
+
+        <label>Nota da experiência</label>
+        <div class="stars" id="f-stars">
+          <span data-v="1">★</span><span data-v="2">★</span><span data-v="3">★</span><span data-v="4">★</span><span data-v="5">★</span>
+        </div>
+
+        <label>Carimbo simbólico</label>
+        <div class="chip-group multi" id="f-symbolic-chips"></div>
+
+        <label>Visto T.A.Y. desta experiência</label>
+        <div class="chip-group multi" id="f-visto-chips"></div>
+
+        <div style="margin-top:26px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <button type="submit" class="btn">Carimbar meu passaporte</button>
+          <span id="sync-status" class="status-pill">● pronto</span>
+        </div>
+      </form>
+    </section>
+
+    <!-- PÁGINA: MEUS CARIMBOS -->
+    <section class="page" data-page="meuscarimbos">
+      <span class="eyebrow">Diário de bordo</span>
+      <h2>Meus Carimbos</h2>
+      <div id="stamps-list"></div>
+    </section>
+
+    <!-- PÁGINA: MISSÕES -->
+    <section class="page" data-page="missoes">
+      <span class="eyebrow">Missões Especiais</span>
+      <h2>Ao longo do tratamento</h2>
+      <p>Complete estas missões no seu próprio tempo.</p>
+      <div id="missions-list"></div>
+    </section>
+
+    <!-- PÁGINA: LISTA DE DESEJOS -->
+    <section class="page" data-page="desejos">
+      <span class="eyebrow">Para explorar</span>
+      <h2>Lista de Desejos</h2>
+      <p>Anote lugares que quer visitar em breve.</p>
+      <div id="wishlist-container"></div>
+    </section>
+
+    <!-- PÁGINA: VISTOS -->
+    <section class="page" data-page="vistos">
+      <span class="eyebrow">Contracapa</span>
+      <h2>Vistos T.A.Y.</h2>
+      <p>Em vez de carimbos de países, cada experiência rende um visto simbólico da sua transformação.</p>
+      <div class="visto-grid" id="visto-grid"></div>
+      <hr class="divider">
+      <div class="closing">
+        <div class="gold-line"></div>
+        <p>Ao longo desta jornada, talvez você colecione menos calorias do que imaginava…<br>e muito mais histórias do que esperava.</p>
+        <div class="gold-line"></div>
+      </div>
+    </section>
+
+  </div>
+</div>
+
+<script src="js/config-loader.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
