@@ -13,9 +13,9 @@
   <img src="assets/logo.png" alt="" style="width:52px; margin-bottom:14px;">
   <h2 style="margin-top:0;">Painel do Método T.A.Y.</h2>
   <p style="color:var(--ink-soft); font-size:14px;">Área restrita à nutricionista.</p>
-  <input type="password" id="passphrase" placeholder="Senha do painel" style="margin-bottom:14px;">
+  <input type="password" id="passphrase" placeholder="Token de acesso" style="margin-bottom:14px;">
   <button class="btn" id="unlock-btn">Entrar</button>
-  <p id="lock-error" style="color:#b5482f; font-size:13px; display:none;">Senha incorreta.</p>
+  <p id="lock-error" style="color:#b5482f; font-size:13px; display:none;">Token incorreto ou backend indisponível.</p>
 </div>
 
 <div id="dash" class="dash-shell" style="display:none">
@@ -24,16 +24,78 @@
     <div class="brand">Painel · Passaporte T.A.Y.</div>
   </div>
 
-  <div class="patient-select">
-    <label style="margin:0;">Paciente</label>
-    <select id="patient-picker"></select>
-    <span id="live-indicator" class="status-pill">● atualizando…</span>
-    <button type="button" class="btn secondary small" id="logout-btn">Sair</button>
+  <div class="tabs" id="main-tabs" style="justify-content:center;">
+    <button class="tab-btn active" data-tab="acompanhamento">Acompanhamento</button>
+    <button class="tab-btn" data-tab="pacientes">Pacientes</button>
   </div>
 
-  <div id="dash-body">
-    <div class="empty-state">Carregando dados…</div>
-  </div>
+  <!-- ===================== ABA: ACOMPANHAMENTO ===================== -->
+  <section id="tab-acompanhamento" class="dash-tab active">
+    <div class="patient-select">
+      <label style="margin:0;">Paciente</label>
+      <select id="patient-picker"></select>
+      <span id="live-indicator" class="status-pill">● atualizando…</span>
+      <button type="button" class="btn secondary small" id="logout-btn">Sair</button>
+    </div>
+
+    <div id="dash-body">
+      <div class="empty-state">Carregando dados…</div>
+    </div>
+  </section>
+
+  <!-- ===================== ABA: PACIENTES ===================== -->
+  <section id="tab-pacientes" class="dash-tab">
+    <div class="stat-card" style="margin-bottom:24px;">
+      <h3 id="pf-title" style="margin-top:0;">Nova paciente</h3>
+      <form id="patient-form">
+        <label>Nome da paciente</label>
+        <input type="text" id="pf-name" required placeholder="Ex.: Lígia">
+
+        <label>Link do passaporte dela</label>
+        <div style="display:flex; gap:8px; align-items:center; flex-wrap:wrap;">
+          <code id="pf-link-preview" style="background:#fff; padding:8px 12px; border-radius:8px; border:1px solid var(--line); font-size:12.5px; word-break:break-all;">—</code>
+          <button type="button" class="btn secondary small" id="pf-edit-id-btn">editar id</button>
+        </div>
+        <input type="text" id="pf-id" style="display:none; margin-top:8px;" placeholder="id-da-paciente">
+
+        <label>Saudação (opcional)</label>
+        <input type="text" id="pf-saudacao" placeholder="Bem-vinda ao seu Passaporte, [Nome]">
+
+        <label>Epígrafe — frase de abertura (opcional)</label>
+        <input type="text" id="pf-epigrafe" placeholder="Nem toda viagem exige um avião…">
+
+        <label>Meta de carimbos</label>
+        <input type="number" id="pf-total" value="12" min="1" style="max-width:120px;">
+
+        <label>Rótulo da categoria — singular / plural</label>
+        <div style="display:flex; gap:10px;">
+          <input type="text" id="pf-rotulo-singular" placeholder="Café">
+          <input type="text" id="pf-rotulo-plural" placeholder="Cafeterias">
+        </div>
+
+        <label>Opções de experiência (separadas por vírgula)</label>
+        <textarea id="pf-experiencias" placeholder="Espresso, Cappuccino, Café coado, Chá especial, Outro"></textarea>
+
+        <label>Categorias da lista de desejos (separadas por vírgula)</label>
+        <input type="text" id="pf-categorias" placeholder="Cafeterias, Livrarias, Museus, Parques">
+
+        <label>Missões (uma por linha)</label>
+        <textarea id="pf-missoes" rows="11"></textarea>
+
+        <div style="margin-top:22px; display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+          <button type="submit" class="btn" id="pf-submit-btn">Salvar paciente</button>
+          <button type="button" class="btn secondary" id="pf-cancel-edit" style="display:none;">Cancelar edição</button>
+          <span id="pf-status" class="status-pill" style="display:none;"></span>
+        </div>
+      </form>
+    </div>
+
+    <div class="stat-card">
+      <h3 style="margin-top:0;">Pacientes cadastradas</h3>
+      <div id="patients-list-admin"></div>
+    </div>
+  </section>
+
 </div>
 
 <script src="js/config-loader.js"></script>
