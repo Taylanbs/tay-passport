@@ -182,26 +182,26 @@ function renderDashboard() {
 
   body.innerHTML = `
     <div class="dash-grid">
-      <div class="stat-card">
+      <div class="stat-card grain">
         <div class="label">Progresso do passaporte</div>
         <div class="value">${carimbos.length}/${totalMetas}</div>
         <div class="progress-bar"><div style="width:${pct}%"></div></div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card grain">
         <div class="label">Nota média das experiências</div>
         <div class="value">${avgRating} ★</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card grain">
         <div class="label">Missões concluídas</div>
         <div class="value">${missoesFeitas.size}/${(cfg.missoes || []).length}</div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card grain">
         <div class="label">Como ela mais tem saído</div>
         <div class="value" style="font-size:22px;">${topLeaving ? topLeaving[0] : '—'}</div>
       </div>
     </div>
 
-    <div class="stat-card" style="margin-bottom:24px;">
+    <div class="stat-card grain" style="margin-bottom:24px;">
       <div class="label" style="margin-bottom:10px;">Vistos T.A.Y. acumulados</div>
       <div class="visto-grid">
         ${(cfg.vistos || []).map(v => `
@@ -213,7 +213,7 @@ function renderDashboard() {
       </div>
     </div>
 
-    <div class="stat-card">
+    <div class="stat-card grain">
       <div class="label" style="margin-bottom:6px;">Linha do tempo</div>
       ${carimbos.length ? carimbos.slice().reverse().map(c => `
         <div class="timeline-entry">
@@ -311,8 +311,6 @@ function buildPatientConfig() {
     epigrafe: document.getElementById('pf-epigrafe').value.trim() || 'Nem toda viagem exige um avião. Algumas começam quando escolhemos estar presentes.',
     total_carimbos: parseInt(document.getElementById('pf-total').value, 10) || 12,
     unidade_destino: 'experiencia',
-    rotulo_categoria_singular: document.getElementById('pf-rotulo-singular').value.trim() || 'Experiência',
-    rotulo_categoria_plural: document.getElementById('pf-rotulo-plural').value.trim() || 'Experiências',
     opcoes_experiencia: experiencias.length ? experiencias : ['Espresso', 'Cappuccino', 'Chá especial', 'Outro'],
     regra_tempo_minutos: 30,
     missoes: missoesTexto.map((t, i) => ({ id: 'm' + (i + 1), texto: t })),
@@ -343,8 +341,6 @@ function fillPatientForm(rec) {
   document.getElementById('pf-saudacao').value = cfg.saudacao || '';
   document.getElementById('pf-epigrafe').value = cfg.epigrafe || '';
   document.getElementById('pf-total').value = cfg.total_carimbos || 12;
-  document.getElementById('pf-rotulo-singular').value = cfg.rotulo_categoria_singular || '';
-  document.getElementById('pf-rotulo-plural').value = cfg.rotulo_categoria_plural || '';
   document.getElementById('pf-experiencias').value = (cfg.opcoes_experiencia || []).join(', ');
   document.getElementById('pf-categorias').value = (cfg.categorias_desejos || []).join(', ');
   document.getElementById('pf-missoes').value = (cfg.missoes || []).map(m => m.texto).join('\n');
@@ -373,13 +369,14 @@ function renderPatientsAdminList() {
     const link = patientLink(rec.patient_id);
     const count = allRows.filter(r => r.patient_id === rec.patient_id && r.type === 'carimbo').length;
     return `
-      <div class="stamp-card" style="margin-bottom:12px;">
+      <div class="stamp-card grain" style="margin-bottom:12px;">
         <h4 style="margin-bottom:2px;">${escapeHtml(rec.config.patient_name || rec.patient_id)}</h4>
         <div class="meta">${count} carimbo(s) · id: ${rec.patient_id}</div>
         <div style="font-size:12.5px; word-break:break-all; margin:8px 0; color:var(--teal-deep);">${link}</div>
         <div style="display:flex; gap:8px; flex-wrap:wrap;">
           <button type="button" class="btn secondary small" data-copy="${link}">Copiar link</button>
           <button type="button" class="btn secondary small" data-edit="${rec.patient_id}">Editar</button>
+          <button type="button" class="btn secondary small" data-delete="${rec.patient_id}" style="border-color:#c98a6f; color:#a04a2f;">Excluir</button>
         </div>
       </div>`;
   }).join('');
@@ -396,6 +393,24 @@ function renderPatientsAdminList() {
     btn.addEventListener('click', () => {
       const rec = allPatients.find(p => p.patient_id === btn.dataset.edit);
       if (rec) fillPatientForm(rec);
+    });
+  });
+  el.querySelectorAll('[data-delete]').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const rec = allPatients.find(p => p.patient_id === btn.dataset.delete);
+      const name = rec ? (rec.config.patient_name || rec.patient_id) : btn.dataset.delete;
+      const sure = confirm(`Excluir "${name}"?\n\nO cadastro dela some do painel e o link dela para de funcionar. Os carimbos que ela já registrou continuam guardados na aba "Eventos" da planilha, mas não aparecerão mais no painel a menos que você a cadastre de novo com o mesmo id (${btn.dataset.delete}).`);
+      if (!sure) return;
+      try {
+        const res = await fetch(TAY.siteConfig.sync_url, {
+          method: 'POST',
+          body: JSON.stringify({ type: 'patient_delete', token: TAY.accessToken, payload: { patient_id: btn.dataset.delete } }),
+        }).then(r => r.json());
+        if (!res.ok) throw new Error(res.error || 'erro ao excluir');
+        await refreshAll();
+      } catch (err) {
+        alert('Não foi possível excluir agora. Verifique sua internet e tente de novo.');
+      }
     });
   });
 }

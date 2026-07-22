@@ -110,8 +110,7 @@ function chipEl(container, value, label, multi, group) {
 function renderStampForm() {
   const entries = loadLS('entries', []);
   document.getElementById('stamp-eyebrow').textContent = `Carimbo Nº ${entries.length + 1} de ${cfg.total_carimbos}`;
-  document.getElementById('f-experience-label').textContent =
-    (cfg.rotulo_categoria_singular ? '☕ O que escolhi experimentar?' : 'O que escolhi experimentar?');
+  document.getElementById('f-experience-label').textContent = '☕ O que escolhi experimentar?';
 
   const expWrap = document.getElementById('f-experience-chips');
   expWrap.innerHTML = '';
@@ -222,7 +221,7 @@ function renderStampsList() {
       return v ? `${v.emoji} ${v.nome}` : '';
     }).filter(Boolean);
     return `
-      <div class="stamp-card">
+      <div class="stamp-card grain">
         <div class="num">${String(en.stamp_number).padStart(2, '0')}</div>
         <h4>📍 ${escapeHtml(en.place || 'Sem nome')}${en.city ? ' · ' + escapeHtml(en.city) : ''}</h4>
         <div class="meta">${formatDate(en.date)} ${en.experience ? '· ' + escapeHtml(en.experience === 'Outro' ? en.experience_other : en.experience) : ''} ${en.rating ? '· ' + '★'.repeat(en.rating) : ''}</div>
@@ -259,22 +258,37 @@ function renderMissions() {
 /* ---------------------------- wishlist ---------------------------- */
 function renderWishlist() {
   const data = loadLS('wishlist', {});
+  const customCats = loadLS('wishlist_custom_categories', []);
   const el = document.getElementById('wishlist-container');
-  el.innerHTML = (cfg.categorias_desejos || []).map(cat => {
-    const items = data[cat] || Array.from({ length: 3 }, () => ({ text: '', done: false }));
+
+  const defaultCats = (cfg.categorias_desejos || []).map(name => ({ name, custom: false }));
+  const extraCats = customCats.map(name => ({ name, custom: true }));
+  const allCats = [...defaultCats, ...extraCats];
+
+  el.innerHTML = allCats.map(({ name: cat, custom }) => {
+    const items = data[cat] || (custom ? [] : Array.from({ length: 3 }, () => ({ text: '', done: false })));
     return `
-      <div class="wishlist-cat" data-cat="${escapeAttr(cat)}">
-        <h3>${escapeHtml(cat)}</h3>
-        ${items.map((it, i) => `
-          <div class="wishlist-row">
-            <input type="checkbox" data-i="${i}" ${it.done ? 'checked' : ''}>
-            <input type="text" data-i="${i}" value="${escapeAttr(it.text)}" placeholder="Adicionar…">
-          </div>`).join('')}
+      <div class="wishlist-cat" data-cat="${escapeAttr(cat)}" data-custom="${custom ? '1' : '0'}">
+        <h3>${escapeHtml(cat)} ${custom ? '<button type="button" class="remove-cat-btn" title="Remover categoria">✕</button>' : ''}</h3>
+        <div class="wishlist-rows">
+          ${items.map((it, i) => `
+            <div class="wishlist-row">
+              <input type="checkbox" data-i="${i}" ${it.done ? 'checked' : ''}>
+              <input type="text" data-i="${i}" value="${escapeAttr(it.text)}" placeholder="Adicionar…">
+            </div>`).join('')}
+        </div>
         <button type="button" class="btn secondary small add-wish-row">+ adicionar linha</button>
       </div>`;
-  }).join('');
+  }).join('') + `
+    <div class="wishlist-cat new-cat-form">
+      <h3>Criar nova categoria</h3>
+      <div class="wishlist-row">
+        <input type="text" id="new-cat-name" placeholder="Ex.: Trilhas, Restaurantes, Ateliês…">
+        <button type="button" class="btn small" id="new-cat-add">Adicionar</button>
+      </div>
+    </div>`;
 
-  el.querySelectorAll('.wishlist-cat').forEach(catEl => {
+  el.querySelectorAll('.wishlist-cat[data-cat]').forEach(catEl => {
     const cat = catEl.dataset.cat;
     function persist() {
       const rows = [...catEl.querySelectorAll('.wishlist-row')];
@@ -301,7 +315,36 @@ function renderWishlist() {
       saveLS('wishlist', data);
       renderWishlist();
     });
+    const removeBtn = catEl.querySelector('.remove-cat-btn');
+    if (removeBtn) {
+      removeBtn.addEventListener('click', () => {
+        if (!confirm(`Remover a categoria "${cat}"? Os itens dela também somem.`)) return;
+        const cats = loadLS('wishlist_custom_categories', []).filter(c => c !== cat);
+        saveLS('wishlist_custom_categories', cats);
+        const data = loadLS('wishlist', {});
+        delete data[cat];
+        saveLS('wishlist', data);
+        renderWishlist();
+      });
+    }
   });
+
+  const addCatBtn = document.getElementById('new-cat-add');
+  const addCatInput = document.getElementById('new-cat-name');
+  addCatBtn.addEventListener('click', async () => {
+    const name = addCatInput.value.trim();
+    if (!name) return;
+    const cats = loadLS('wishlist_custom_categories', []);
+    if (cats.includes(name) || (cfg.categorias_desejos || []).includes(name)) {
+      addCatInput.value = '';
+      return;
+    }
+    cats.push(name);
+    saveLS('wishlist_custom_categories', cats);
+    renderWishlist();
+    await queueSync('nova_categoria_desejo', { categoria: name });
+  });
+  addCatInput.addEventListener('keydown', (e) => { if (e.key === 'Enter') { e.preventDefault(); addCatBtn.click(); } });
 }
 
 /* ---------------------------- vistos ---------------------------- */
