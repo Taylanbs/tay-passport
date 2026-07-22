@@ -14,10 +14,25 @@
  *    - Executar como: Eu
  *    - Quem pode acessar: Qualquer pessoa
  * 5. Copie a URL gerada e cole em config/site.json (campo "sync_url").
+ *
+ * SEGURANÇA — IMPORTANTE:
+ * Como o site fica num repositório público do GitHub, qualquer pessoa pode ver
+ * a URL deste backend (ela precisa estar no código do site para funcionar).
+ * Para que estranhos não consigam LER os diários das pacientes, a leitura
+ * (doGet, usada pelo painel) exige um token secreto — mas esse token NUNCA
+ * fica escrito em nenhum arquivo/código, nem aqui, nem no GitHub. Ele fica
+ * guardado só dentro do próprio Google Apps Script, em "Propriedades do
+ * script" (Configurações do projeto ⚙️ → Propriedades do script → Adicionar
+ * propriedade → nome: ACCESS_TOKEN, valor: uma senha longa à sua escolha).
+ * Sem isso configurado, a leitura fica bloqueada por padrão.
  */
 
 const SHEET_ID = 'COLE_AQUI_O_ID_DA_PLANILHA';
 const SHEET_NAME = 'Eventos';
+
+function getAccessToken_() {
+  return PropertiesService.getScriptProperties().getProperty('ACCESS_TOKEN');
+}
 
 function getSheet_() {
   const ss = SpreadsheetApp.openById(SHEET_ID);
@@ -50,6 +65,15 @@ function doPost(e) {
 
 function doGet(e) {
   try {
+    const expected = getAccessToken_();
+    const given = e.parameter && e.parameter.token;
+    if (!expected) {
+      return jsonResponse_({ ok: false, error: 'ACCESS_TOKEN não configurado. Veja as instruções no topo do arquivo.' });
+    }
+    if (given !== expected) {
+      return jsonResponse_({ ok: false, error: 'unauthorized' });
+    }
+
     const sheet = getSheet_();
     const values = sheet.getDataRange().getValues();
     const header = values.shift();

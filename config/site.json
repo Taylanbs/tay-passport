@@ -1,5 +1,4 @@
 {
-  "_instrucoes": "olhar o reademe.md para instruções de configuração",
-  "sync_url": "https://script.google.com/macros/s/AKfycbyT0eGUP_05zvtJe_lh0lmrG-R7ey-AJNGypXLLGBNfVkyIwyzQDgRkgmXN1ifEzMEH6w/exec",
-  "dashboard_passphrase": "metodotay2026"
+  "_instrucoes": "Cole aqui a URL da sua implantação do Google Apps Script (Code.gs) depois de publicá-la como Web App. Veja o README.md, passo 2. A senha do painel NÃO fica mais aqui — ela é configurada direto no Apps Script (Propriedades do script -> ACCESS_TOKEN), justamente para não ficar visível no GitHub.",
+  "sync_url": "https://script.google.com/macros/s/AKfycbyT0eGUP_05zvtJe_lh0lmrG-R7ey-AJNGypXLLGBNfVkyIwyzQDgRkgmXN1ifEzMEH6w/exec"
 }

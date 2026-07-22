@@ -9,18 +9,51 @@ let patientConfigs = {};
 let currentPatient = null;
 const POLL_MS = 15000;
 
+const TOKEN_KEY = 'tay_dashboard_token';
+
 document.getElementById('unlock-btn').addEventListener('click', tryUnlock);
 document.getElementById('passphrase').addEventListener('keydown', (e) => { if (e.key === 'Enter') tryUnlock(); });
+
+// Se o token já foi salvo neste navegador numa visita anterior, pula a tela de senha.
+(async function autoUnlock() {
+  const saved = localStorage.getItem(TOKEN_KEY);
+  if (saved) {
+    await TAY.loadAllSiteOnly();
+    TAY.accessToken = saved;
+    const ok = await testToken(saved);
+    if (ok) {
+      document.getElementById('lock').style.display = 'none';
+      document.getElementById('dash').style.display = 'block';
+      boot();
+    }
+  }
+})();
 
 async function tryUnlock() {
   const { site } = await TAY.loadAllSiteOnly();
   const input = document.getElementById('passphrase').value;
-  if (input && input === (site.dashboard_passphrase || '')) {
+  const ok = await testToken(input);
+  if (ok) {
+    TAY.accessToken = input;
+    localStorage.setItem(TOKEN_KEY, input);
     document.getElementById('lock').style.display = 'none';
     document.getElementById('dash').style.display = 'block';
     boot();
   } else {
     document.getElementById('lock-error').style.display = 'block';
+  }
+}
+
+// Faz uma chamada de teste ao backend com o token informado, para confirmar que bate
+// com o ACCESS_TOKEN configurado nas Propriedades do script (Apps Script).
+async function testToken(token) {
+  const url = TAY.siteConfig && TAY.siteConfig.sync_url;
+  if (!url || url.startsWith('COLE_AQUI') || !token) return false;
+  try {
+    const res = await fetch(url + '?token=' + encodeURIComponent(token)).then(r => r.json());
+    return !!res.ok;
+  } catch (e) {
+    return false;
   }
 }
 
@@ -33,6 +66,10 @@ TAY.loadAllSiteOnly = async function () {
 async function boot() {
   await refreshData();
   setInterval(refreshData, POLL_MS);
+  document.getElementById('logout-btn').onclick = () => {
+    localStorage.removeItem(TOKEN_KEY);
+    location.reload();
+  };
 }
 
 async function refreshData() {
@@ -46,7 +83,7 @@ async function refreshData() {
   try {
     indicator.textContent = '● atualizando…';
     indicator.className = 'status-pill pending';
-    const res = await fetch(url).then(r => r.json());
+    const res = await fetch(url + '?token=' + encodeURIComponent(TAY.accessToken || '')).then(r => r.json());
     if (!res.ok) throw new Error(res.error || 'erro desconhecido');
     allRows = res.rows || [];
     indicator.textContent = '● ao vivo';
