@@ -27,7 +27,7 @@
  * Sem isso configurado, a leitura fica bloqueada por padrão.
  */
 
-const SHEET_ID = 'COLE_AQUI_O_ID_DA_PLANILHA';
+const SHEET_ID = SpreadsheetApp.getActiveSpreadsheet().getId();
 const SHEET_NAME = 'Eventos';
 
 function getAccessToken_() {
