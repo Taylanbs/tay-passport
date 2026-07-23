@@ -146,40 +146,42 @@ a{ color:var(--teal-ink); }
   color:var(--gold);
 }
 
-/* ---------- tabs (estilo editorial, sublinhado — não "chips" de app) ---------- */
+/* ---------- tabs (botões com contorno — sem scroll, quebra de linha) ---------- */
 .tabs{
   display:flex;
-  gap:26px;
-  overflow-x:auto;
+  flex-wrap:wrap;
+  gap:10px;
   margin:34px 0 26px;
-  padding-bottom:12px;
-  border-bottom:1px solid var(--line);
 }
 .tab-btn{
   flex:0 0 auto;
-  border:none;
-  background:none;
-  color:var(--ink-soft);
-  padding:4px 2px 14px;
+  border:1px solid var(--hairline);
+  background:transparent;
+  color:var(--teal-ink);
+  padding:11px 20px;
+  border-radius:2px;
   font-family:'Italiana', serif;
-  font-size:12.5px;
+  font-size:12px;
   text-transform:uppercase;
-  letter-spacing:.16em;
+  letter-spacing:.14em;
   cursor:pointer;
-  transition:.2s;
+  transition:background .25s ease, color .25s ease, border-color .25s ease;
   white-space:nowrap;
-  position:relative;
 }
-.tab-btn::after{
-  content:"";
-  position:absolute; left:0; right:0; bottom:-13px;
-  height:2px;
-  background:linear-gradient(90deg,var(--gold),var(--amber));
-  transform:scaleX(0);
-  transition:transform .25s ease;
+.tab-btn:hover{
+  background:var(--sage);
+  border-color:var(--teal);
+  color:var(--teal-deep);
 }
-.tab-btn.active{ color:var(--teal-ink); }
-.tab-btn.active::after{ transform:scaleX(1); }
+.tab-btn.active{
+  background:var(--teal-ink);
+  border-color:var(--teal-ink);
+  color:var(--paper);
+}
+.tab-btn.active:hover{
+  background:#164e4c;
+  color:var(--paper);
+}
 
 .page{
   display:none;
